@@ -38,6 +38,8 @@ INSTALLED_APPS = [
     'django.contrib.sessions',
     'django.contrib.messages',
     'django.contrib.staticfiles',
+    'account',
+    'exchange'
 ]
 
 MIDDLEWARE = [
@@ -137,3 +139,5 @@ CORS_ALLOW_HEADERS = (
     'x-csrftoken',
     'x-requested-with',
 )
+
+AUTH_USER_MODEL = 'account.Account'
