@@ -2,7 +2,7 @@ from django.db       import models
 from exchange.models import Item
 
 class Account(models.Model):
-    name         = models.CharField(max_length=50)
+    name         = models.CharField(max_length=50, null=True)
     password     = models.CharField(max_length=400)
     email        = models.EmailField(max_length=200, unique=True)
     nickname     = models.CharField(max_length=50, null=True)
@@ -14,7 +14,6 @@ class Account(models.Model):
 
     class Meta:
         db_table = 'accounts'
-
 
 class Offer(models.Model):
     account        = models.ForeignKey(Account, on_delete=models.CASCADE, null=True)
