@@ -1,14 +1,27 @@
-import json
+import re
 import jwt
+import json
 import bcrypt
 
-from account.models     import Account
-from my_settings        import SECRET_KEY
-from .utils             import Login_Check, validate_password, validate_special_char
-from unittest.mock      import patch, MagicMock
+from .models                import Account, Trade
+from exchange.models        import Currency, Item, Price, Report, AccountItem
+from .utils                 import Login_Check, validate_password, validate_special_char
+from my_settings            import SECRET_KEY
+from .tokens                import account_activation_token
 
-from django.test        import TestCase, Client
-from django.http        import JsonResponse,HttpResponse
+from django.views                   import View
+from django.http                    import HttpResponse, JsonResponse
+from django.core.exceptions         import ValidationError
+from django.core.validators         import validate_email
+from datetime                       import timedelta
+from django.db.models               import Avg
+from django.shortcuts               import redirect
+from django.contrib.sites.shortcuts import get_current_site
+from django.utils.http              import urlsafe_base64_encode,urlsafe_base64_decode
+from django.core.mail               import EmailMessage
+from django.utils.encoding          import force_bytes, force_text
+from django.test                    import TestCase, Client
+
 
 class SignUp(TestCase):
     def setUp(self):
@@ -95,8 +108,9 @@ class SignIn(TestCase):
     def setUp(self):
         password = bcrypt.hashpw("Test12341234!".encode("UTF-8"), bcrypt.gensalt()).decode("UTF-8")
         Account.objects.create(
-            email    = "test1234@gmail.com",
-            password = password
+            email     = "test1234@gmail.com",
+            password  = password,
+            is_active = True
         )
 
     def tearDown(self):
@@ -162,3 +176,44 @@ class SignIn(TestCase):
         self.assertEqual(response.status_code, 400)       
         self.assertEqual(response.json(), {"message" : "INVALID_KEY"})
 
+class Active(TestCase):
+    def setUp(self):
+        password = bcrypt.hashpw("Test12341234!".encode("UTF-8"), bcrypt.gensalt()).decode("UTF-8")
+        user = Account.objects.create(
+                email    = "test1234@gmail.com",
+                password = password
+        )
+
+    def tearDown(self):
+        Account.objects.all().delete()
+
+    def test_email_auth_success(self):
+        user = Account.objects.get(email = 'test1234@gmail.com')
+
+        client = Client()
+
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        token = account_activation_token.make_token(user)
+
+        response = client.get(f"/account/activate/{uidb64}/{token}")
+
+        uid  = force_text(urlsafe_base64_decode(uidb64))
+        user = Account.objects.get(pk=uid)
+  
+        self.assertEqual(response.status_code, 302)       
+
+    def test_email_auth_fail(self):
+        user = Account.objects.get(email = 'test1234@gmail.com')
+
+        client = Client()
+
+        uidb64 = urlsafe_base64_encode(force_bytes(user.pk))
+        token = "1234"
+
+        response = client.get(f"/account/activate/{uidb64}/{token}")
+
+        uid  = force_text(urlsafe_base64_decode(uidb64))
+        user = Account.objects.get(pk=uid)
+
+        self.assertEqual(response.status_code, 400)
+            
