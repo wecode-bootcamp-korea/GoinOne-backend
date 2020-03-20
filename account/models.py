@@ -2,17 +2,17 @@ from django.db       import models
 from exchange.models import Item
 
 class Account(models.Model):
-    name            = models.CharField(max_length=50, null=True)
-    password        = models.CharField(max_length=400)
-    email           = models.EmailField(max_length=200, unique=True)
-    nickname        = models.CharField(max_length=50, null=True)
-    bank            = models.CharField(max_length=50, null=True)
-    bank_account    = models.CharField(max_length=200, null=True)
-    curreny_balance = models.DecimalField(max_digits=20, decimal_places=8, default=10000000000)
-    address         = models.CharField(max_length=500, null=True)
-    is_active       = models.BooleanField(default=False, null=True)
-    created_at      = models.DateTimeField(auto_now_add=True, null=True)
-    updated_at      = models.DateTimeField(auto_now=True, null=True)
+    name             = models.CharField(max_length=50, null=True)
+    password         = models.CharField(max_length=400)
+    email            = models.EmailField(max_length=200, unique=True)
+    nickname         = models.CharField(max_length=50, null=True)
+    bank             = models.CharField(max_length=50, null=True)
+    bank_account     = models.CharField(max_length=200, null=True)
+    currency_balance = models.DecimalField(max_digits=20, decimal_places=8, default=100000000)
+    address          = models.CharField(max_length=500, null=True)
+    is_active        = models.BooleanField(default=False, null=True)
+    created_at       = models.DateTimeField(auto_now_add=True, null=True)
+    updated_at       = models.DateTimeField(auto_now=True, null=True)
 
     class Meta:
         db_table = 'accounts'

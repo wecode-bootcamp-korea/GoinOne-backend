@@ -17,7 +17,7 @@ class Login_Check:
         try:
             if token:
                 token_payload = jwt.decode(token, SECRET_KEY["secret"], SECRET_KEY["algorithm"])
-                user          = Account.objects.get(id = token_payload["id"])
+                user          = Account.objects.get(email = token_payload["email"]).id
                 request.user  = user
 
                 return self.original_function(self, request, *args, **kwargs)
@@ -26,7 +26,6 @@ class Login_Check:
 
         except jwt.DecodeError:
             return JsonResponse({"message":"INVALID_USER"}, status=401)
-
 
 def validate_password(password):
     validate_condition = [

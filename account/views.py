@@ -81,7 +81,7 @@ class SignInView(View):
                     token = jwt.encode({"email" : data["email"]}, SECRET_KEY["secret"], SECRET_KEY["algorithm"]).decode("UTF-8")
 
                     if user.is_active == True:
-                        return JsonResponse({"access_token" : token}, status=200)
+                        return JsonResponse({"Authorization" : token}, status=200)
 
                     return JsonResponse({"message" : "ACCOUNT_NOT_AUTH"}, status=400)
 
@@ -109,6 +109,55 @@ class Activate(View):
             return JsonResponse({"message" : "AUTH FAIL"}, status=400)
 
         except ValidationError:
-            return JsonResponse({"message" : "TYPE_ERROR"}, status=400)
+            return JsonResponse({"message" : "VALIDATION_ERROR"}, status=400)
         except KeyError:
             return JsonResponse({"message" : "INVALID_KEY"}, status=400)
+
+class BalanceView(View):
+    @Login_Check
+    def get(self, request):
+        try:
+            balance_list = []
+            user_currency_balance = Account.objects.get(id = request.user).currency_balance
+            
+            if not Trade.objects.filter(buyer_id = request.user).exists():
+                return JsonResponse({"balance" : balance_list, "total_asset" : user_currency_balance}, status=200) 
+
+            item_balance    = 0
+            total_buy_price = 0
+            amount          = 0
+            account_items   = AccountItem.objects.filter(account_id = request.user)
+            item_list       = [account_item.item_id for account_item in account_items]
+                   
+            for item_data in item_list:
+                amount        = account_items.get(item_id = item_data).amount
+                avg_buy_price = Trade.objects.filter(buyer_id = request.user, item_id = item_data).aggregate(Avg('trade_price'))["trade_price__avg"]
+                now_price     = Price.objects.filter(item_id = item_data).latest('created_at').trade_price
+                
+                balance_list.append({  
+                        "name"          : Item.objects.get(id = item_data).code,
+                        "amount"        : amount,
+                        "avg_buy_price" : avg_buy_price,
+                        "now_price"     : amount * now_price,
+                        "buy_price"     : amount * avg_buy_price,
+                        "change_price"  : amount * now_price - amount * avg_buy_price,
+                        "change_rate"   : ((now_price * amount) - (avg_buy_price * amount)) / (avg_buy_price * amount) * 100
+                })
+                        
+            for balance in balance_list:
+                item_balance    += balance['now_price']
+                total_buy_price += balance['buy_price']
+
+            total_asset = {
+                "currency_balance"   : user_currency_balance,
+                "item_balance"       : item_balance,
+                "total_buy_price"    : total_buy_price,
+                "total_change_price" : item_balance - total_buy_price,
+                "total_change_rate"  : (item_balance - total_buy_price) / total_buy_price * 100
+            }
+
+            return JsonResponse({"balance" : balance_list, "total_asset" : total_asset}, status=200)
+                
+        except KeyError:
+            return JsonResponse({"message" : "INVALID_KEY"}, status=400)
+

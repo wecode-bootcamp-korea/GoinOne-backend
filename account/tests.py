@@ -128,7 +128,7 @@ class SignIn(TestCase):
         token    = jwt.encode({"email" : account["email"]}, SECRET_KEY["secret"], SECRET_KEY["algorithm"]).decode("UTF-8")
 
         self.assertEqual(response.status_code, 200)
-        self.assertEqual(response.json(), {"access_token" : token})
+        self.assertEqual(response.json(), {"Authorization" : token})
 
     def test_signin_invalid_email(self):
         account = {
@@ -176,6 +176,7 @@ class SignIn(TestCase):
         self.assertEqual(response.status_code, 400)       
         self.assertEqual(response.json(), {"message" : "INVALID_KEY"})
 
+
 class Active(TestCase):
     def setUp(self):
         password = bcrypt.hashpw("Test12341234!".encode("UTF-8"), bcrypt.gensalt()).decode("UTF-8")
@@ -217,3 +218,101 @@ class Active(TestCase):
 
         self.assertEqual(response.status_code, 400)
             
+
+class BalanceView(TestCase):
+    def setUp(self):
+        password = bcrypt.hashpw("Test12341234!".encode("UTF-8"), bcrypt.gensalt()).decode("UTF-8")
+        user = Account.objects.create(
+            id               = 1,
+            email            = "test1234@gmail.com",
+            password         = password,
+            is_active        = True,
+            currency_balance = 100000000
+        )
+        Currency.objects.create(
+            id               = 1,
+            code             = 'krw',
+            name             = '원화',
+            is_active        = True,
+            is_base_currency = True
+        )
+
+        Item.objects.create(
+            id               = 1,
+			currency_id      = Currency.objects.get(id=1).id,
+			code 			 = 'BTC',
+			name 			 = '비트코인',
+            is_active        = True,
+			price_unit       = 1,
+			amount_unit      = 1,
+        )
+
+        AccountItem.objects.create(
+            id           = 1,
+			account_id   = Account.objects.get(id=1).id,
+			item_id      = Item.objects.get(id=1).id,
+			amount       = 1,
+        )
+
+        Price.objects.create(
+            id           = 1,
+			item_id      = Item.objects.get(id=1).id,
+			currency_id  = Currency.objects.get(id=1).id,
+			trade_price  = 1000,
+        )
+
+        Trade.objects.create(
+            id           = 1,
+			item_id      = Item.objects.get(id=1).id,
+			buyer_id     = Account.objects.get(id=1).id,
+			amount       = 1,
+			trade_price  = 100
+        )
+
+    def tearDown(self):
+        Account.objects.all().delete()
+
+    def test_balance_view_success(self):
+        user = {
+            'email' : "test1234@gmail.com"
+        }
+                
+        client = Client()
+
+        token = jwt.encode({"email" : user['email']}, SECRET_KEY["secret"], SECRET_KEY["algorithm"]).decode("UTF-8")
+        header = {'HTTP_Authorization' : token}
+
+        response = client.get('/account/balance', **header)
+
+        TestCase.maxDiff = None
+        self.assertEqual(response.status_code, 200)
+        self.assertEqual(response.json(), {
+            'balance': [{
+                'amount': '1.00000000',
+                'avg_buy_price': '100.000000000000',
+                'buy_price': '100.00000000000000000000',
+                'change_price': '900.00000000000000000000',
+                'change_rate': '900',
+                'name': 'BTC',
+                'now_price': '1000.0000000000000000'}],
+            'total_asset': {
+                'currency_balance': '100000000.00000000',
+                'item_balance': '1000.0000000000000000',
+                'total_buy_price': '100.00000000000000000000',
+                'total_change_price': '900.00000000000000000000',
+                'total_change_rate': '900'}
+            })
+
+    def test_balance_view_invalid_user(self):
+        user = {
+            'email' : "test1234@gmail.com"
+        }
+                
+        client = Client()
+
+        token = jwt.encode({"email" : user['email']}, SECRET_KEY["secret"], SECRET_KEY["algorithm"]).decode("UTF-8")
+        header = {'HTTP_Authorization' : '1234'}
+
+        response = client.get('/account/balance', **header)
+        self.assertEqual(response.status_code, 401)
+        self.assertEqual(response.json(), {"message" : "INVALID_USER"})
