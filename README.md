@@ -4,8 +4,7 @@
 ## 개발 인원 및 기간
 - 개발기간 : 2020.03.09 ~ 2020.03.20 (2week)
 - 개발인원 : 2 Front-End, 1 Back-End
-- Github : [Front-End](https://github.com/wecode-bootcamp-korea/myfaketrip-frontend)<br/>
-[Native](https://github.com/wecode-bootcamp-korea/GoinOne-app)
+- Github : [Front-End](https://github.com/wecode-bootcamp-korea/myfaketrip-frontend) [Native](https://github.com/wecode-bootcamp-korea/GoinOne-app)
 
 ## 데모 영상 (이미지 클릭)
 [![코인원](https://i.ytimg.com/vi/WL7wZg1-4xQ/hqdefault.jpg?sqp=-oaymwEZCNACELwBSFXyq4qpAwsIARUAAIhCGAFwAQ==&rs=AOn4CLCwkIHa79701hm2f8_HTqgXrnaKZQ)](https://www.youtube.com/watch?v=WL7wZg1-4xQ)
