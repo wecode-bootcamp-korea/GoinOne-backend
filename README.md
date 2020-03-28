@@ -40,6 +40,9 @@
 - 코인 리스트 조회
 - 차트 작성을 위한 과거 데이터 조회
 
+## API Document
+[API 문서 보기](https://documenter.getpostman.com/view/10398819/SzS8s59w?version=latest)
+
 ## ERD
 ![데이터모델링](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FUniG7%2FbtqCZylwn8X%2FmjX0WBsymC2qkbSoy8Occ0%2Fimg.png)
 
