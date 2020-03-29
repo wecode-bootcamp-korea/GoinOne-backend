@@ -7,7 +7,7 @@
 - Github : [Front-End](https://github.com/wecode-bootcamp-korea/myfaketrip-frontend), [Native](https://github.com/wecode-bootcamp-korea/GoinOne-app)
 
 ## 데모 영상 (이미지 클릭)
-[![코인원](https://i9.ytimg.com/vi/54d8MrYExqI/mqdefault.jpg?time=1585488725010&sqp=CNjFgvQF&rs=AOn4CLDdy9_tGPSCgK_3iTLR78AX5kBa6g)](https://studio.youtube.com/video/54d8MrYExqI/edit)
+[![코인원](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FMtQoF%2FbtqC228lqdH%2F3MkGNCb2xaHrDkE8VIVbQ0%2Fimg.png)](https://studio.youtube.com/video/54d8MrYExqI/edit)
 
 ## 적용 기술
 - Python
