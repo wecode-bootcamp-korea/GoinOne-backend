@@ -44,5 +44,5 @@
 [API 문서 보기](https://documenter.getpostman.com/view/10398819/SzS8s59w?version=latest)
 
 ## ERD
-![데이터모델링](https://img1.daumcdn.net/thumb/R1280x0/?scode=mtistory2&fname=https%3A%2F%2Fk.kakaocdn.net%2Fdn%2FzBxIC%2FbtqDf02CwaQ%2FrCG8klfkzKwOo6C0ZHKJKk%2Fimg.png)
+![데이터모델링](https://k.kakaocdn.net/dn/zBxIC/btqDf02CwaQ/rCG8klfkzKwOo6C0ZHKJKk/img.png)
 
