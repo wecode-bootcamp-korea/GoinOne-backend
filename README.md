@@ -46,5 +46,5 @@
 ## ERD
 ![데이터모델링](https://k.kakaocdn.net/dn/zBxIC/btqDf02CwaQ/rCG8klfkzKwOo6C0ZHKJKk/img.png)
 
-#### 추가되는 사항은 아래 레포로 추가 예정
+#### ** 추가되는 사항은 아래 레포로 추가 예정
 [바로 가기](https://github.com/Wave1994-Hoon/Crytocurrency-exchange-clone)
